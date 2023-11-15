@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
   push:
 
+jobs:
 # Builds a new container image, and pushes it on every commit to the repository
 # Also pushes a tag called "latest" to track the latest commit
 # Push both latest and with tag based on commit id. this way i can use "latest" if i want the image pulled, but have less control than if i use unique ID on each tag.
 build_docker_image:
   name: "Push Docker image to ECR"
   runs-on: ubuntu-latest
+
 
   steps:
     - name: Check out the repo
