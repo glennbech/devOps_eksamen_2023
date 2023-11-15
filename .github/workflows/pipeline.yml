@@ -1,10 +1,9 @@
-name: Build and deploy Lambda
+name: Publish lambda function
+
 on:
   workflow_dispatch:
 
   push:
-    branches:
-      - main
 
 defaults:
   run:
@@ -12,6 +11,7 @@ defaults:
 
 jobs:
   build-deploy:
+    name: Build and deploy lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,5 +22,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - run: sam build --use-container
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-app-2016 --s3-bucket lambda-deployments-2016 --capabilities CAPABILITY_IAM --region eu-west-1
+
+      - name: Build lambda
+        run: sam build --use-container
+      - name: Deploy lambda
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-app-2016 --s3-bucket lambda-deployments-2016 --capabilities CAPABILITY_IAM --region eu-west-1
