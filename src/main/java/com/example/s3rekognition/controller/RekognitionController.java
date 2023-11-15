@@ -1,5 +1,6 @@
 package com.example.s3rekognition.controller;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import com.amazonaws.services.rekognition.model.*;
@@ -28,8 +29,8 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
     private static final Logger logger = Logger.getLogger(RekognitionController.class.getName());
 
     public RekognitionController() {
-        this.s3Client = AmazonS3ClientBuilder.standard().build();
-        this.rekognitionClient = AmazonRekognitionClientBuilder.standard().build();
+        this.s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build();
+        this.rekognitionClient = AmazonRekognitionClientBuilder.standard().withRegion(Regions.EU_WEST_1).build();
     }
 
     /**

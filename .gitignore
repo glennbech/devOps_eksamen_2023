@@ -1,3 +1,4 @@
 /.idea/
 /kjell/.aws-sam/
 /kjell/samconfig.toml
+/target/
