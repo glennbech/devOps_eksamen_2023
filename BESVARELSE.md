@@ -4,3 +4,4 @@
     - AWS_SECRET_ACCESS_KEY
 ### Bucket needed to store template.yml, needs to be created manually if AWS env is reset:
     - lambda-deployments-2016
+TESTING BRANCH ONLY BUILD.
