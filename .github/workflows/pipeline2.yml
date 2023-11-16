@@ -38,6 +38,7 @@ jobs:
           docker push 244530008913.dkr.ecr.eu-west-1.amazonaws.com/2016-repo:latest
 
   create_app_runner:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     name: "Creating AppRunner"
     needs: build_docker_image
     runs-on: ubuntu-latest
