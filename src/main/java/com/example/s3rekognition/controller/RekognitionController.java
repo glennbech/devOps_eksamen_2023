@@ -53,11 +53,34 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
         // This is all the images in the bucket
         List<S3ObjectSummary> images = imageList.getObjectSummaries();
 
+        List<String> requiredProtection = new ArrayList<>();
+
         // Iterate over each object and scan for PPE
         for (S3ObjectSummary image : images) {
-            logger.info("scanning " + image.getKey());
+            requiredProtection.add("FACE_COVER");
+            logger.info("scanning " + image.getKey() + " for labels");
 
-            // This is where the magic happens, use AWS rekognition to detect PPE
+            // Scanning for labels and checking if label is a child of "tool".
+            DetectLabelsRequest labelsRequest = new DetectLabelsRequest()
+                    .withImage(new Image()
+                            .withS3Object(new S3Object()
+                                    .withBucket(bucketName)
+                                    .withName(image.getKey())))
+                    .withMaxLabels(10).withMinConfidence(80F);
+            DetectLabelsResult labelsResult = rekognitionClient.detectLabels(labelsRequest);
+
+            // Checks if any of the parents of all the labels is tool.
+            // If label has "tool" as a parent, hand cover is added to required protection.
+            List<Label> labels = labelsResult.getLabels();
+            for (Label label : labels) {
+                List<Parent> parents = label.getParents();
+                if(isTool(parents)){
+                    requiredProtection.add("HAND_COVER");
+                }
+            }
+            logger.info("scanning " + image.getKey() + " for required protection " + requiredProtection);
+
+            // Scanning image for required protection and set violation to true if the required protection is not found.
             DetectProtectiveEquipmentRequest request = new DetectProtectiveEquipmentRequest()
                     .withImage(new Image()
                             .withS3Object(new S3Object()
@@ -65,37 +88,40 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                                     .withName(image.getKey())))
                     .withSummarizationAttributes(new ProtectiveEquipmentSummarizationAttributes()
                             .withMinConfidence(80f)
-                            .withRequiredEquipmentTypes("FACE_COVER"));
+                            .withRequiredEquipmentTypes(requiredProtection));
 
             DetectProtectiveEquipmentResult result = rekognitionClient.detectProtectiveEquipment(request);
 
-            // If any person on an image lacks PPE on the face, it's a violation of regulations
-            boolean violation = isViolation(result);
+            // If the list with persons without required equipment is not empty, then a violation is there.
+            boolean violation = !result.getSummary().getPersonsWithoutRequiredEquipment().isEmpty();
 
             logger.info("scanning " + image.getKey() + ", violation result " + violation);
             // Categorize the current image as a violation or not.
             int personCount = result.getPersons().size();
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation);
             classificationResponses.add(classification);
+
+            // Clear the required protection for next image.
+            requiredProtection.clear();
         }
         PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
         return ResponseEntity.ok(ppeResponse);
     }
 
-    /**
-     * Detects if the image has a protective gear violation for the FACE bodypart-
-     * It does so by iterating over all persons in a picture, and then again over
-     * each body part of the person. If the body part is a FACE and there is no
-     * protective gear on it, a violation is recorded for the picture.
-     *
-     * @param result
-     * @return
-     */
-    private static boolean isViolation(DetectProtectiveEquipmentResult result) {
-        return result.getPersons().stream()
-                .flatMap(p -> p.getBodyParts().stream())
-                .anyMatch(bodyPart -> bodyPart.getName().equals("FACE")
-                        && bodyPart.getEquipmentDetections().isEmpty());
+
+
+    // Check if label is under type "tool".
+    private static boolean isTool(List<Parent> parents) {
+        if (!parents.isEmpty()) {
+
+            for (Parent parent : parents) {
+                if (parent.getName().equalsIgnoreCase("tool")) {
+                    logger.info("person is holding tool");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

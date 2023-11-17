@@ -9,3 +9,10 @@
 ## Task 2:
 ### Need to create ecr repo manually
     - 2016-repo
+
+
+
+## Task 4:
+### Ideas metrics 
+    - Amount of persons scanned.
+    - Put in try catch AmazonRekognitionException.
