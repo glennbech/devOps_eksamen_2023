@@ -8,8 +8,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.example.s3rekognition.PPEClassificationResponse;
-import com.example.s3rekognition.PPEResponse;
+import com.example.s3rekognition.ppescan.PPEClassificationResponse;
+import com.example.s3rekognition.ppescan.PPEResponse;
+import com.example.s3rekognition.weaponscan.WeaponClassificationResponse;
+import com.example.s3rekognition.weaponscan.WeaponScanResponse;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,57 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
     public RekognitionController() {
         this.s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build();
         this.rekognitionClient = AmazonRekognitionClientBuilder.standard().withRegion(Regions.EU_WEST_1).build();
+    }
+
+
+    // TODO Should i just make this check for all moderation's instead of only weapons?
+    /**
+     * Scan all images in the bucket for moderation labels.
+     * If a weapon label is found in the image, the relevant classification-information is added to the response.
+     * If a weapon label is not found it is not added to the response.
+     * @param bucketName
+     */
+    @GetMapping(value = "/scan-weapon", consumes = "*/*", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<WeaponScanResponse> scanForWeapon(@RequestParam String bucketName) {
+        // List with all objects in the bucket.
+        ListObjectsV2Result objectList = s3Client.listObjectsV2(bucketName);
+
+        // List with all our weapon checks.
+        List<WeaponClassificationResponse> classificationResponses = new ArrayList<>();
+
+        // List with all the images in the bucket
+        List<S3ObjectSummary> images = objectList.getObjectSummaries();
+
+
+        for (S3ObjectSummary image : images) {
+
+            // Create the request to detect labels.
+            DetectModerationLabelsRequest request = new DetectModerationLabelsRequest()
+                    .withImage(new Image().withS3Object(new S3Object().withBucket(bucketName).withName(image.getKey())))
+                    .withMinConfidence(60F);
+
+            try {
+                // Scan for labels.
+                DetectModerationLabelsResult result = rekognitionClient.detectModerationLabels(request);
+                List<ModerationLabel> labels = result.getModerationLabels();
+
+                // Iterate through the labels, if weapon is found classification is created with relevant info and added to response.
+                for (ModerationLabel label : labels) {
+                    if (label.getName().equalsIgnoreCase("weapons")) {
+                        WeaponClassificationResponse classification = new WeaponClassificationResponse(image.getKey(), label.getConfidence(), label.getName(), label.getParentName(), true);
+                        classificationResponses.add(classification);
+                    }
+                }
+
+            } catch (AmazonRekognitionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        WeaponScanResponse weaponScanResponse = new WeaponScanResponse(bucketName, classificationResponses);
+
+        return ResponseEntity.ok(weaponScanResponse);
     }
 
     /**
@@ -60,7 +113,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             requiredProtection.add("FACE_COVER");
             logger.info("scanning " + image.getKey() + " for labels");
 
-            // Scanning for labels and checking if label is a child of "tool".
+            // Scanning for labels in image.
             DetectLabelsRequest labelsRequest = new DetectLabelsRequest()
                     .withImage(new Image()
                             .withS3Object(new S3Object()
@@ -74,7 +127,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             List<Label> labels = labelsResult.getLabels();
             for (Label label : labels) {
                 List<Parent> parents = label.getParents();
-                if(isTool(parents)){
+                if (isTool(parents)) {
                     requiredProtection.add("HAND_COVER");
                 }
             }
@@ -107,7 +160,6 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
         PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
         return ResponseEntity.ok(ppeResponse);
     }
-
 
 
     // Check if label is under type "tool".

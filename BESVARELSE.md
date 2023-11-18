@@ -15,4 +15,10 @@
 ## Task 4:
 ### Ideas metrics 
     - Amount of persons scanned.
-    - Put in try catch AmazonRekognitionException.
+    - Amount of persons not violating the requ equipment.
+
+## TODO
+     - Maybe add different violations for Head and Hand cover to
+      the PPEClassificationResponse.
+    - Put in try catch, AmazonRekognitionException.
+    - Get rid of Get/set and constructor with lombok annotations.

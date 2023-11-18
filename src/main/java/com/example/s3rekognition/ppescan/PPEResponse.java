@@ -1,4 +1,6 @@
-package com.example.s3rekognition;
+package com.example.s3rekognition.ppescan;
+
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
  * This is the response sent back from the Apprunner service
  *
  */
+
 public class PPEResponse implements Serializable {
 
     String bucketName;

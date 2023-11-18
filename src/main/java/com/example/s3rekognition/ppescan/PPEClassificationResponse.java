@@ -1,4 +1,4 @@
-package com.example.s3rekognition;
+package com.example.s3rekognition.ppescan;
 
 import java.io.Serializable;
 
