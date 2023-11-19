@@ -16,18 +16,14 @@ import java.util.logging.Logger;
 
 
 @RestController
-public class RekognitionController implements ApplicationListener<ApplicationReadyEvent> {
+public class RekognitionController  {
 
 
-    private static Integer scanCount;
     private RekognitionService rekognitionService;
-
-    MeterRegistry meterRegistry;
     private static final Logger logger = Logger.getLogger(RekognitionController.class.getName());
 
     @Autowired
-    public RekognitionController(MeterRegistry meterRegistry, RekognitionService rekognitionService) {
-        this.meterRegistry = meterRegistry;
+    public RekognitionController( RekognitionService rekognitionService) {
         this.rekognitionService = rekognitionService;
     }
 
@@ -43,20 +39,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
     @ResponseBody
     public ResponseEntity<PPEResponse> scanForPPE(@RequestParam String bucketName) {
         PPEResponse ppeResponse = rekognitionService.scanForPPE(bucketName);
-        scanCount += ppeResponse.getResults().stream().mapToInt(PPEClassificationResponse::getPersonCount).sum();
         return ResponseEntity.ok(ppeResponse);
     }
 
-
-    /**
-     * Called only once, when the event "application ready" comes.
-     * (When everything else in code is ready, method is run)
-     *
-     * @param applicationReadyEvent the event to respond to
-     */
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        Gauge.builder("ppe_scan_count", scanCount, Integer::intValue).register(meterRegistry);
-
-    }
 }

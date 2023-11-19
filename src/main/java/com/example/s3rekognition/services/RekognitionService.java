@@ -12,8 +12,11 @@ import com.example.s3rekognition.ppescan.PPEClassificationResponse;
 import com.example.s3rekognition.ppescan.PPEResponse;
 import com.example.s3rekognition.weaponscan.WeaponClassificationResponse;
 import com.example.s3rekognition.weaponscan.WeaponScanResponse;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,9 +24,14 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RekognitionService {
+public class RekognitionService implements ApplicationListener<ApplicationReadyEvent> {
 
 
+    private static Double scanCount = 0.0;
+
+    private static List<Integer> jalla = new ArrayList<>();
+
+    private static
     MeterRegistry meterRegistry;
     private AmazonS3 s3Client;
     private AmazonRekognition rekognitionClient;
@@ -52,6 +60,9 @@ public class RekognitionService {
         List<S3ObjectSummary> images = imageList.getObjectSummaries();
 
         List<String> requiredProtection = new ArrayList<>();
+
+        int scanCount = 0;
+        int scanViolations = 0;
 
         // Iterate over each object and scan for PPE
         for (S3ObjectSummary image : images) {
@@ -100,9 +111,20 @@ public class RekognitionService {
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation);
             classificationResponses.add(classification);
 
+            // Update scanCount with how many persons scanned in image.
+            scanCount += personCount;
+            // Update scanViolations with how many persons scanned in image not wearing required equipment.
+            scanViolations += result.getSummary().getPersonsWithoutRequiredEquipment().size();
+
             // Clear the required protection for next image.
             requiredProtection.clear();
         }
+
+        // Increment ppe_scan_count metric with how many persons is scanned.
+        meterRegistry.counter("ppe_scan_count").increment(scanCount);
+        // Increment ppe_scan_violation_count with how many of the persons has violated the requirement.
+        meterRegistry.counter("ppe_scan_violation_count").increment(scanViolations);
+
         return new PPEResponse(bucketName, classificationResponses);
     }
 
@@ -169,4 +191,15 @@ public class RekognitionService {
         return false;
     }
 
+    /**
+     * Called only once, when the event "application ready" comes.
+     * (When everything else in code is ready, method is run)
+     *
+     * @param applicationReadyEvent the event to respond to
+     */
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+     /*   Gauge.builder("ppe_scan_count", scanCount, Double::doubleValue).register(meterRegistry);*/
+
+    }
 }

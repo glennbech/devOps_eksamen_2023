@@ -22,3 +22,12 @@
       the PPEClassificationResponse.
     - Put in try catch, AmazonRekognitionException.
     - Get rid of Get/set and constructor with lombok annotations.
+
+
+## Metrics context
+* count of people scanned for entering construction area.
+* count of people entering construction area without required equipment.
+* count of people potentially holding entering with weapon.
+* count of people leaving construction area.
+* gauge of how many people is in construction area.
+* timer for average construction area. 
