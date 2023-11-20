@@ -30,4 +30,4 @@
 * count of people potentially holding entering with weapon.
 * count of people leaving construction area.
 * gauge of how many people is in construction area.
-* timer for average construction area. 
+* timer for average time spent in construction area. 

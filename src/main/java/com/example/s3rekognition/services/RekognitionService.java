@@ -27,14 +27,14 @@ import java.util.List;
 public class RekognitionService implements ApplicationListener<ApplicationReadyEvent> {
 
 
-    private static Double scanCount = 0.0;
+    private static int personsInConstructionArea = 0;
 
     private static List<Integer> jalla = new ArrayList<>();
 
-    private static
-    MeterRegistry meterRegistry;
+    private MeterRegistry meterRegistry;
     private AmazonS3 s3Client;
     private AmazonRekognition rekognitionClient;
+
 
     public RekognitionService(MeterRegistry meterRegistry) {
         this.s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build();
@@ -42,13 +42,51 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
         this.meterRegistry = meterRegistry;
     }
 
+
+    // TODO SHOULD THIS EVEN RETURN ANYTHING?! WTF!!!
+    public Integer enterConstructionArea(String bucketName) {
+        // List all objects in the S3 bucket
+        ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
+        // This is all the images in the bucket
+        List<S3ObjectSummary> images = imageList.getObjectSummaries();
+
+        int scanCount = 0;
+        for (S3ObjectSummary image : images) {
+            scanCount += countPersonsInImage(bucketName, image.getKey());
+        }
+
+        personsInConstructionArea += scanCount;
+
+
+        return scanCount;
+    }
+
+    // TODO SHOULD THIS EVEN RETURN ANYTHING?! WTF!!!
+    public Integer exitConstructionArea(String bucketName) {
+        // List all objects in the S3 bucket
+        ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
+        // This is all the images in the bucket
+        List<S3ObjectSummary> images = imageList.getObjectSummaries();
+
+        int scanCount = 0;
+        for (S3ObjectSummary image : images) {
+            scanCount += countPersonsInImage(bucketName, image.getKey());
+        }
+
+        personsInConstructionArea -= scanCount;
+
+
+        return scanCount;
+    }
+
     /**
      * Scan all images in bucket for PPE violations.
      * face cover is required, and if X holds a tool hand cover is also required.
+     *
      * @param bucketName
      * @return
      */
-    public PPEResponse scanForPPE(String bucketName){
+    public PPEResponse scanForPPE(String bucketName) {
 
         // List all objects in the S3 bucket
         ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
@@ -139,6 +177,10 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
      * @param bucketName
      */
     public WeaponScanResponse scanForWeapons(String bucketName) {
+
+        int scanCount = 0;
+        int scanViolations = 0;
+
         // List with all objects in the bucket.
         ListObjectsV2Result objectList = s3Client.listObjectsV2(bucketName);
 
@@ -166,16 +208,28 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
                     if (label.getName().equalsIgnoreCase("weapons")) {
                         WeaponClassificationResponse classification = new WeaponClassificationResponse(image.getKey(), label.getConfidence(), label.getName(), label.getParentName(), true);
                         classificationResponses.add(classification);
+                        scanViolations++;
                     }
                 }
+
+                System.out.println(scanViolations);
+                scanCount += countPersonsInImage(bucketName, image.getKey());
 
             } catch (AmazonRekognitionException e) {
                 e.printStackTrace();
             }
         }
 
+        // Increment weapon_scan_count metric with how many persons is scanned.
+        meterRegistry.counter("weapon_scan_count").increment(scanCount);
+
+        // Increment weapon_scan_violation_count with how many of persons with weapon discovered.
+        meterRegistry.counter("weapon_scan_violation_count").increment(scanViolations);
+
+
         return new WeaponScanResponse(bucketName, classificationResponses);
     }
+
 
     // Check if label is under type "tool".
     private static boolean isTool(List<Parent> parents) {
@@ -191,6 +245,34 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
         return false;
     }
 
+
+    // TODO find a better way than use PPE scan to get out amount of persons in image.
+
+    /**
+     * Use PPE scan to get out amount of persons scanned.
+     *
+     * @param bucketName
+     * @param imageName
+     * @return Integer amount of persons on the image.
+     */
+    public Integer countPersonsInImage(String bucketName, String imageName) {
+
+
+        DetectProtectiveEquipmentRequest request = new DetectProtectiveEquipmentRequest()
+                .withImage(new Image()
+                        .withS3Object(new S3Object()
+                                .withBucket(bucketName)
+                                .withName(imageName)))
+                .withSummarizationAttributes(new ProtectiveEquipmentSummarizationAttributes()
+                        .withMinConfidence(80f)
+                        .withRequiredEquipmentTypes("FACE_COVER"));
+
+        DetectProtectiveEquipmentResult result = rekognitionClient.detectProtectiveEquipment(request);
+
+        return result.getPersons().size();
+    }
+
+
     /**
      * Called only once, when the event "application ready" comes.
      * (When everything else in code is ready, method is run)
@@ -199,7 +281,6 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
      */
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-     /*   Gauge.builder("ppe_scan_count", scanCount, Double::doubleValue).register(meterRegistry);*/
-
+        Gauge.builder("persons_in_area_count", () -> personsInConstructionArea).register(meterRegistry);
     }
 }

@@ -10,30 +10,42 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.logging.Logger;
 
 
 @RestController
-public class RekognitionController  {
+public class RekognitionController {
 
 
     private RekognitionService rekognitionService;
     private static final Logger logger = Logger.getLogger(RekognitionController.class.getName());
 
     @Autowired
-    public RekognitionController( RekognitionService rekognitionService) {
+    public RekognitionController(RekognitionService rekognitionService) {
         this.rekognitionService = rekognitionService;
     }
 
 
+    @GetMapping(path = "/enter", consumes = "*/*", produces = "application/json")
+    public ResponseEntity<String> enteringConstructionAreaScan(@RequestParam String bucketName) {
+        return ResponseEntity.ok(rekognitionService.enterConstructionArea(bucketName) + " Entered");
+    }
+
+    @GetMapping(path = "/exit", consumes = "*/*", produces = "application/json")
+    public ResponseEntity<String> exitingConstructionAreaScan(@RequestParam String bucketName) {
+        return ResponseEntity.ok(rekognitionService.exitConstructionArea(bucketName) + " Exited");
+    }
+
     @GetMapping(value = "/scan-weapon", consumes = "*/*", produces = "application/json")
     @ResponseBody
     public ResponseEntity<WeaponScanResponse> scanForWeapon(@RequestParam String bucketName) {
+
         return ResponseEntity.ok(rekognitionService.scanForWeapons(bucketName));
     }
-
 
     @GetMapping(value = "/scan-ppe", consumes = "*/*", produces = "application/json")
     @ResponseBody
