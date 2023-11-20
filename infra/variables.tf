@@ -22,3 +22,7 @@ variable "bucket" {
   type = string
   default = "2016-bucket"
 }
+
+variable "alarm_email" {
+  type = string
+}

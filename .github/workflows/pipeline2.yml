@@ -50,6 +50,7 @@ jobs:
       ECR_REPO: 2016-repo
       IMAGE_TAG: latest
       PREFIX: 2016
+      EMAIL: rikatob@hotmail.com
     steps:
       - uses: actions/checkout@v3
       - name: Setup Terraform
@@ -64,7 +65,7 @@ jobs:
         working-directory: ${{env.DIRECTORY}}
         id: plan
 
-        run: terraform plan   -var="prefix=$PREFIX" -var="ecrRepo=$ECR_REPO" -var="imageTag=$IMAGE_TAG"  -no-color
+        run: terraform plan -var="alarm_email=$EMAIL" -var="prefix=$PREFIX" -var="ecrRepo=$ECR_REPO" -var="imageTag=$IMAGE_TAG"  -no-color
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -75,4 +76,4 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{env.DIRECTORY}}
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -var="prefix=$PREFIX" -var="ecrRepo=$ECR_REPO" -var="imageTag=$IMAGE_TAG"  -auto-approve
+        run: terraform apply -var="alarm_email=$EMAIL" -var="prefix=$PREFIX" -var="ecrRepo=$ECR_REPO" -var="imageTag=$IMAGE_TAG"  -auto-approve
