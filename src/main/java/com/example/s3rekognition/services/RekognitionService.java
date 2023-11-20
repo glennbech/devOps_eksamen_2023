@@ -29,8 +29,6 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
 
     private static int personsInConstructionArea = 0;
 
-    private static List<Integer> jalla = new ArrayList<>();
-
     private MeterRegistry meterRegistry;
     private AmazonS3 s3Client;
     private AmazonRekognition rekognitionClient;
@@ -43,7 +41,6 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
     }
 
 
-    // TODO SHOULD THIS EVEN RETURN ANYTHING?! WTF!!!
     public Integer enterConstructionArea(String bucketName) {
         // List all objects in the S3 bucket
         ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
@@ -61,7 +58,7 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
         return scanCount;
     }
 
-    // TODO SHOULD THIS EVEN RETURN ANYTHING?! WTF!!!
+
     public Integer exitConstructionArea(String bucketName) {
         // List all objects in the S3 bucket
         ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);

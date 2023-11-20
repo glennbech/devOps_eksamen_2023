@@ -1,4 +1,3 @@
-/*
 package com.example.s3rekognition.configurations;
 
 import io.micrometer.core.aop.TimedAspect;
@@ -13,4 +12,4 @@ public class TimedConfig {
     public TimedAspect timedAspect(MeterRegistry registry) {
         return new TimedAspect(registry);
     }
-}*/
+}

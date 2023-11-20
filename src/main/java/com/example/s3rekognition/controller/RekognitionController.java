@@ -5,6 +5,7 @@ import com.example.s3rekognition.ppescan.PPEClassificationResponse;
 import com.example.s3rekognition.ppescan.PPEResponse;
 import com.example.s3rekognition.services.RekognitionService;
 import com.example.s3rekognition.weaponscan.WeaponScanResponse;
+import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class RekognitionController {
         return ResponseEntity.ok(rekognitionService.exitConstructionArea(bucketName) + " Exited");
     }
 
+    @Timed(value = "scan_time")
     @GetMapping(value = "/scan-weapon", consumes = "*/*", produces = "application/json")
     @ResponseBody
     public ResponseEntity<WeaponScanResponse> scanForWeapon(@RequestParam String bucketName) {
@@ -47,6 +49,7 @@ public class RekognitionController {
         return ResponseEntity.ok(rekognitionService.scanForWeapons(bucketName));
     }
 
+    @Timed(value = "scan_time")
     @GetMapping(value = "/scan-ppe", consumes = "*/*", produces = "application/json")
     @ResponseBody
     public ResponseEntity<PPEResponse> scanForPPE(@RequestParam String bucketName) {

@@ -105,6 +105,54 @@ resource "aws_cloudwatch_dashboard" "main" {
           }
         }
       }
+    },
+    {
+      "type": "metric",
+      "stacked": false,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "${var.prefix}",
+            "scan_time.avg",
+            "exception",
+            "none",
+            "method",
+            "scanForPPE",
+            "class",
+            "com.example.s3rekognition.controller.RekognitionController"
+          ]
+        ],
+        "view": "timeSeries",
+        "period": 300,
+        "region": "eu-west-1",
+        "title": "Time for processing a PPE scan"
+      }
+    },
+    {
+      "type": "metric",
+      "stacked": false,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "${var.prefix}",
+            "scan_time.avg",
+            "exception",
+            "none",
+            "method",
+            "scanForWeapon",
+            "class",
+            "com.example.s3rekognition.controller.RekognitionController"
+          ]
+        ],
+        "view": "timeSeries",
+        "period": 300,
+        "region": "eu-west-1",
+        "title": "Time for processing a Weapon scan"
+      }
     }
   ]
 }

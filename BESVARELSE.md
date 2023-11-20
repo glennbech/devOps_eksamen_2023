@@ -10,24 +10,20 @@
 ### Need to create ecr repo manually
     - 2016-repo
 
-
-
 ## Task 4:
-### Ideas metrics 
-    - Amount of persons scanned.
-    - Amount of persons not violating the requ equipment.
 
-## TODO
-     - Maybe add different violations for Head and Hand cover to
-      the PPEClassificationResponse.
-    - Put in try catch, AmazonRekognitionException.
-    - Get rid of Get/set and constructor with lombok annotations.
-
-
-## Metrics context
-* count of people scanned for entering construction area.
-* count of people entering construction area without required equipment.
-* count of people potentially holding entering with weapon.
-* count of people leaving construction area.
-* gauge of how many people is in construction area.
-* timer for average time spent in construction area. 
+### Metrics context
+    - Monitoring on a construction site.
+        - Scanning
+            - Camera scanning people entering and exiting the area.
+            - Camera scanning if people are using Required PPE equipment.
+            - Camera scanning people for weapons.
+        - Seven Metrics in dashboard
+            - To know how many people getting scanned for PPE equipment.
+            - To know how many people violating PPE requirements.
+            - To know how many people getting scanned for weapons.
+            - To know how many weapons was discovered.
+            - Gauge to show how many people are in the construction site incase of emergency etc.
+            - Two metrics showing the time for doing a scan for PPE and Weapon, 
+              this way we can together with the factors, how many persons scanned and how many violations 
+              try to oprimize the scanning routine.
