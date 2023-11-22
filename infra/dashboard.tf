@@ -5,6 +5,22 @@ resource "aws_cloudwatch_dashboard" "main" {
   "widgets": [
 
     {
+      "type": "alarm",
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 3,
+      "properties": {
+        "alarms": [
+          [
+            "2016-weapon-detected"
+          ]
+        ],
+        "region": "eu-west-1",
+        "title": "Weapon alarm"
+      }
+    },
+    {
       "type": "metric",
       "x": 0,
       "y": 0,

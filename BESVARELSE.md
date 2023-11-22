@@ -19,7 +19,8 @@
     - 2016-repo
 
 ## Task 4:
-
+    - bucket used for testing = 2016-bucket
+    - dashboard = Dashboard-2016
 ### Metrics context
     - Monitoring on a construction site.
         - Scanning
@@ -120,7 +121,7 @@
     	-> da er devops mer effektivt enn scrum.
     	
     	Overordnet føler jeg at om vi er i startfasen/mindre prosjekt som kanskje er preget av og hele tiden tilpasse seg kunden sine behov og vite hvilke saker som bør prioriteres så er scrum fordelaktig. 
-    	På den andre siden, om prosjektet er større og kanskje mer GRUNNLAGT og kanskje er mer avhengig av ofte og pålitlig levere oppdateringer, så vil fordelene av automatiserte prosesser være mye mer fordelaktig.
+    	På den andre siden, om prosjektet er større og kanskje mer etablert og kanskje er mer avhengig av ofte og pålitlig levere oppdateringer, så vil fordelene av automatiserte prosesser være mye mer fordelaktig.
     	
     	Om jeg personlig skal grovt oppsummere , liker jeg scrum sin måte og klare å komme fra ingenting til et produkt og også litt sånn, du har ansvaret for dette mens jeg konsentrerer meg om det jeg har annsvaret for.
     	På den andre siden liker jeg kulturen og sammarbeidet om å hele tiden sammen jobbe mot å få produktet og prosessen forbedret som devOps resulterer i. 
