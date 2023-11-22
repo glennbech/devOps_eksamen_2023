@@ -1,6 +1,6 @@
 ## Task 1:
 ### Add secrets and activate actions on GitHub repo.
-    These secrets and env varibles needs to be set up in github action:
+    These secrets needs to be set up in github action:
     - AWS_ACCESS_KEY_ID
         <ID from IAM>
     - AWS_SECRET_ACCESS_KEY

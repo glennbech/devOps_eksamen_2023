@@ -13,7 +13,7 @@ resource "aws_cloudwatch_dashboard" "main" {
       "properties": {
         "alarms": [
           [
-            "2016-weapon-detected"
+            "arn:aws:sns:eu-west-1:244530008913:alarm:2016-weapon-detected"
           ]
         ],
         "region": "eu-west-1",
