@@ -7,7 +7,7 @@
     - lambda-deployments-2016
 
 ## Task 2:
-### Need to create ecr repo manually
+### Need to create ecr repo manually AWS env is reset
     - 2016-repo
 
 ## Task 4:
@@ -24,15 +24,20 @@
             - To know how many people getting scanned for weapons.
             - To know how many weapons was discovered.
             - Gauge to show how many people are in the construction site incase of emergency etc.
-            - Two metrics showing the time for doing a scan for PPE and Weapon, 
-              this way we can together with the factors, how many persons scanned and how many violations 
-              try to oprimize the scanning routine.
+            - Two timers tracking the time it take for doing a PPE scan and a Weapon scan. 
+              With these timers we can together with the other factors, how many persons scanned and how many violations, 
+              try to optimize/improve the scanning routine. An example can be if we find out that the scanning drasticly goes up
+              if there are more then 10 people in one scan, then we might want to find a way to split the input up in two parts before scanning.
+		- Alarm
+			- I chose a alarm to go off if a weapon is detected, this way the security personel can react in a proper manner.
+			- I could set an alarm if a violation in the PPE requirement aswell, but this is kinda duplicate the same thing
+			  and also i dont want an email everytime somebody dont wear the required equipment. 
 
 
-
-Task 5
-A)
-	Definisjon: Den automatiske prosessen som gjør at flere kodere som jobber på samme prosjekt, lett kan integrere koden sin mot main branchen.
+## Task 5
+### A)
+    Definisjon: 
+		Den automatiske prosessen som gjør at flere kodere som jobber på samme prosjekt, lett kan integrere koden sin mot main branchen.
 	Fordel: 
 		- Mulighet for å sette opp automatiserte tester som pusha kode må passere for å bli integrert mot branchen.
 		Dette forbedrer kodekvaliteten da du er sikker på at all kode som blir integrert i branchen må ha passert testene.
@@ -58,10 +63,11 @@ A)
 		For eksempel, bygge image -> kjøre tf kode som setter opp repo -> deploye imaget til ecr.
 
 
-B)
+### B)
 	1)
     	Scrum:
-    	Lage userstories i sammerbeid med kunden -> dele userstories opp i oppgaver -> tilegnde vanskelighetsgrad (story points) -> kjøre sprint på 1 - 4 uker der oppgaver grupper mener de kan gjennomføre settes inn ->
+    	
+		Lage userstories i sammerbeid med kunden -> dele userstories opp i oppgaver -> tilegnde vanskelighetsgrad (story points) -> kjøre sprint på 1 - 4 uker der oppgaver grupper mener de kan gjennomføre settes inn ->
     	sprinten evalueres underveis med daily standup og i slutten med sprint review (gruppen) og sprint retrospect (scrum master og kunden).
     	
     	I grove trekk vil jeg si det handler om å dele et prosjekt opp i mindre og mindre biter slik at en gruppe lettere kan organisere seg.
@@ -80,10 +86,11 @@ B)
     		
 	2)
     	DevOps:
-    	Flyt -> få bedre "flyt" i kodeprosessen med automatiske rutiner. 
-    	Feedback -> bruke verktøy som logging, alarm, metrikker og tester for å få tilbakemeldinger om faktorer i prosjektet. 
-    	Kontinuerlig forbedring -> Bruke data fra "feedback" til å hele tiden forbedre produktet. Dette kan være bekreftelse på om en feature er velykket, som vist i oppgave C, eller en log som viser til
-    	hvem/hva som har forårsaket en feil. Blameless postmortem er et konsept satt opp for å håndtere feedback om en feil slik at fokuset er på å forbedre prosessen heller en å gi noen skylda.
+        Alle disse prinsippene blir beskrevet i mer detalj ellers i oppgaven, men som en oversikt: 
+    	    Flyt -> få bedre "flyt" i kodeprosessen med automatiske rutiner(CI, CD, IAC,PIPELINE). 
+    	    Feedback -> bruke verktøy som logging, alarm, metrikker og tester for å få tilbakemeldinger om faktorer i prosjektet. 
+    	    Kontinuerlig forbedring -> Bruke data fra "feedback" til å hele tiden forbedre produktet. Dette kan være bekreftelse på om en feature er velykket, som vist i oppgave C, eller en log som viser til
+    	    hvem/hva som har forårsaket en feil. Blameless postmortem er et konsept satt opp for å håndtere feedback om en feil slik at fokuset er på å forbedre prosessen heller en å gi noen skylda.
     
     	Siden DevOps er basert på å sette sammen avdelingene utvikling og drift, heller enn å ha de splittet, åpner dette for muligheten for å hele tiden forbedre kvaliteten av produktet.
     	Jeg som utvikler kan få kontinuerlig tilbakemelding om utfordringer som kommer når produktet er i produksjon, noe som ved for eksempel "fossefall" ikke ville kommet før produktet var ferdig i utviklingsfasen og 
@@ -113,7 +120,7 @@ B)
 	
 
 
-C)
+### C)
 	Det første jeg tenker på er web butikk.
 	Jeg tenker det er et godt eksempel da den har 1 klart mål, mest mulig salg, og samtidig er salget basert på utrolig mange faktorer som det kan være nyttig å "tracke" for å sjekke om en feature er bra eller ikke.
 	For eksempel, denne nettsiden har bare en statisk forside med innlogging, hoved kategorier, logo og bedrift info. Videre ønsker jeg å legge til en feature som gjør forsiden mer innbydende.
