@@ -49,8 +49,8 @@ jobs:
       AWS_REGION: eu-west-1
       ECR_REPO: 2016-repo
       IMAGE_TAG: latest
-      PREFIX: 2016
-      EMAIL: rikatob@hotmail.com
+      PREFIX: ${{secrets.CANDIDATE_NUMBER}}
+      EMAIL: ${{secrets.EMAIL_ADDRESS}}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Terraform

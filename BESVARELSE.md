@@ -1,7 +1,15 @@
 ## Task 1:
 ### Add secrets and activate actions on GitHub repo.
+    These secrets and env varibles needs to be set up in github action:
     - AWS_ACCESS_KEY_ID
+        <ID from IAM>
     - AWS_SECRET_ACCESS_KEY
+        <Key from IAM>
+    - CANDIDATE_NUMBER (works as prefix in the code)
+        2016
+    - EMAIL_ADDRESS
+        <email adress to send alarm notification>
+
     - Settings -> Actions -> General -> Allow all actions and reusable workflows -> save
 ### Bucket needed to store template.yml, needs to be created manually if AWS env is reset:
     - lambda-deployments-2016
@@ -101,6 +109,7 @@
     	Det jeg tenker på som er en utfording med denne måten å jobbe på er at hele prosjektets kvalitet avhenger av en god pipeline. Fordelen med at jeg som utvikler kan konsentrere meg om mitt felt, gjør også at jeg           ikke bruker fokus på pipeline og går utifra at dette er bra.
     	Er for eksempel testene eller de automatiske verktøyene satt opp dårlig, så kan den tryggheten jeg som utvikler føler på med å jobbe i DevOps, fort resultere i store problemer(falsk trygghet).
     
+    3)
     	Jeg syntes det er litt vanskelig å sammenligne Scrum og DevOps, da jeg føler en av fordelene med scrum blant annet handler om å effektivisere en utviklings prosess som må gjøres i begge metodikkene.
     	Jeg skal forklare tankegangen med et eksempel der vi isolert ser på utviklingen av en feature:
     	si vi skal lage en feature som vi i dette eksempelet vet tar 1,5 uke 
