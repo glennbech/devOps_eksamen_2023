@@ -40,7 +40,11 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
         this.meterRegistry = meterRegistry;
     }
 
-
+    /**
+     * Iterate through the bucket objects and counting the persons.
+     * @param bucketName
+     * @return Integer, the count of how many persons was scanned entering area.
+     */
     public Integer enterConstructionArea(String bucketName) {
         // List all objects in the S3 bucket
         ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
@@ -54,11 +58,14 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
 
         personsInConstructionArea += scanCount;
 
-
         return scanCount;
     }
 
-
+    /**
+     * Iterate through the bucket objects and counting the persons.
+     * @param bucketName
+     * @return Integer, the count of how many persons was scanned exiting area.
+     */
     public Integer exitConstructionArea(String bucketName) {
         // List all objects in the S3 bucket
         ListObjectsV2Result imageList = s3Client.listObjectsV2(bucketName);
@@ -72,13 +79,12 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
 
         personsInConstructionArea -= scanCount;
 
-
         return scanCount;
     }
 
     /**
      * Scan all images in bucket for PPE violations.
-     * face cover is required, and if X holds a tool hand cover is also required.
+     * FACE_COVER is required, and if X holds a tool, HAND_COVER is also added to required equipment.
      *
      * @param bucketName
      * @return
@@ -141,6 +147,7 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
             boolean violation = !result.getSummary().getPersonsWithoutRequiredEquipment().isEmpty();
 
             log.info("scanning " + image.getKey() + ", violation result " + violation);
+
             // Categorize the current image as a violation or not.
             int personCount = result.getPersons().size();
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation);
@@ -165,7 +172,6 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
 
 
     // TODO Should i just make this check for all moderation's instead of only weapons?
-
     /**
      * Scan all images in the bucket for moderation labels.
      * If a weapon label is found in the image, the relevant classification-information is added to the response.
@@ -244,9 +250,8 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
 
 
     // TODO find a better way than use PPE scan to get out amount of persons in image.
-
     /**
-     * Use PPE scan to get out amount of persons scanned.
+     * Scan an image and count the persons in that image.
      *
      * @param bucketName
      * @param imageName
@@ -273,7 +278,7 @@ public class RekognitionService implements ApplicationListener<ApplicationReadyE
     /**
      * Called only once, when the event "application ready" comes.
      * (When everything else in code is ready, method is run)
-     *
+     * Register the gauge to keep track on how many persons are in the construction area.
      * @param applicationReadyEvent the event to respond to
      */
     @Override

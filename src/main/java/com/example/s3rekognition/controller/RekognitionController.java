@@ -33,11 +33,13 @@ public class RekognitionController {
 
     @GetMapping(path = "/enter", consumes = "*/*", produces = "application/json")
     public ResponseEntity<String> enteringConstructionAreaScan(@RequestParam String bucketName) {
+        logger.info("Entering construction area with " + bucketName );
         return ResponseEntity.ok(rekognitionService.enterConstructionArea(bucketName) + " Entered");
     }
 
     @GetMapping(path = "/exit", consumes = "*/*", produces = "application/json")
     public ResponseEntity<String> exitingConstructionAreaScan(@RequestParam String bucketName) {
+        logger.info("Exiting construction area with " + bucketName );
         return ResponseEntity.ok(rekognitionService.exitConstructionArea(bucketName) + " Exited");
     }
 
@@ -45,7 +47,7 @@ public class RekognitionController {
     @GetMapping(value = "/scan-weapon", consumes = "*/*", produces = "application/json")
     @ResponseBody
     public ResponseEntity<WeaponScanResponse> scanForWeapon(@RequestParam String bucketName) {
-
+        logger.info("Scanning for weapon with " + bucketName );
         return ResponseEntity.ok(rekognitionService.scanForWeapons(bucketName));
     }
 
@@ -53,8 +55,8 @@ public class RekognitionController {
     @GetMapping(value = "/scan-ppe", consumes = "*/*", produces = "application/json")
     @ResponseBody
     public ResponseEntity<PPEResponse> scanForPPE(@RequestParam String bucketName) {
-        PPEResponse ppeResponse = rekognitionService.scanForPPE(bucketName);
-        return ResponseEntity.ok(ppeResponse);
+        logger.info("Scanning for PPE with " + bucketName );
+        return ResponseEntity.ok(rekognitionService.scanForPPE(bucketName));
     }
 
 }

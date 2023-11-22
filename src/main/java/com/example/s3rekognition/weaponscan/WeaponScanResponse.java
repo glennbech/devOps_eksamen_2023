@@ -14,6 +14,4 @@ public class WeaponScanResponse implements Serializable {
 
     String bucketName;
     List<WeaponClassificationResponse> results;
-
-
 }
