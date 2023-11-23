@@ -141,8 +141,8 @@ resource "aws_cloudwatch_dashboard" "main" {
         "view": "timeSeries",
         "period": 300,
         "region": "eu-west-1",
-        "title": "Time for processing a PPE scan"
-        "stacked": true,
+        "title": "Time for processing a PPE scan",
+        "stacked": true
       }
     },
     {
@@ -167,8 +167,8 @@ resource "aws_cloudwatch_dashboard" "main" {
         "view": "timeSeries",
         "period": 300,
         "region": "eu-west-1",
-        "title": "Time for processing a Weapon scan"
-        "stacked": true,
+        "title": "Time for processing a Weapon scan",
+        "stacked": true
       }
     }
   ]
