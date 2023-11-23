@@ -11,7 +11,8 @@ resource "aws_cloudwatch_dashboard" "main" {
       "width": 6,
       "height": 3,
       "properties": {
-        "alarms": "2016-weapon-detected",
+        "alarms": ["2016-weapon-detected"
+        ],
         "region": "eu-west-1",
         "title": "Weapon alarm"
       }
