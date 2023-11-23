@@ -123,7 +123,6 @@ resource "aws_cloudwatch_dashboard" "main" {
       "type": "metric",
       "x": 0,
       "y": 35,
-      "stacked": true,
       "width": 12,
       "height": 6,
       "properties": {
@@ -143,13 +142,13 @@ resource "aws_cloudwatch_dashboard" "main" {
         "period": 300,
         "region": "eu-west-1",
         "title": "Time for processing a PPE scan"
+        "stacked": true,
       }
     },
     {
       "type": "metric",
       "x": 13,
       "y": 35,
-      "stacked": true,
       "width": 12,
       "height": 6,
       "properties": {
@@ -169,6 +168,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         "period": 300,
         "region": "eu-west-1",
         "title": "Time for processing a Weapon scan"
+        "stacked": true,
       }
     }
   ]
