@@ -6,12 +6,12 @@ resource "aws_cloudwatch_dashboard" "main" {
 
     {
       "type": "alarm",
-      "x": 0,
-      "y": 0,
-      "width": 6,
-      "height": 3,
+      "x": 13,
+      "y": 28,
+      "width": 12,
+      "height": 6,
       "properties": {
-        "alarms": ["2016-weapon-detected"
+        "alarms": ["arn:aws:cloudwatch:eu-west-1:244530008913:alarm:2016-weapon-detected"
         ],
         "region": "eu-west-1",
         "title": "Weapon alarm"
@@ -121,7 +121,9 @@ resource "aws_cloudwatch_dashboard" "main" {
     },
     {
       "type": "metric",
-      "stacked": false,
+      "x": 0,
+      "y": 35,
+      "stacked": true,
       "width": 12,
       "height": 6,
       "properties": {
@@ -145,7 +147,9 @@ resource "aws_cloudwatch_dashboard" "main" {
     },
     {
       "type": "metric",
-      "stacked": false,
+      "x": 13,
+      "y": 35,
+      "stacked": true,
       "width": 12,
       "height": 6,
       "properties": {
