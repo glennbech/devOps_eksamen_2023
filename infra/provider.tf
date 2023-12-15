@@ -7,7 +7,7 @@ terraform {
   }
   backend "s3" {
     bucket = "2016-terraform-state-bucket"
-    key    = "apprunner.state"
+    key    = "apprunner-sensur.state"
     region = "eu-west-1"
   }
 }

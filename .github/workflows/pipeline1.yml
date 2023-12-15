@@ -1,8 +1,6 @@
 name: Publish lambda function
 
 on:
-  workflow_dispatch:
-
   push:
 
 defaults:
@@ -27,4 +25,4 @@ jobs:
         run: sam build --use-container
       - name: Deploy lambda
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-app-2016 --s3-bucket lambda-deployments-2016 --capabilities CAPABILITY_IAM --region eu-west-1
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-app-20162 --s3-bucket lambda-deployments-2016 --capabilities CAPABILITY_IAM --region eu-west-1
