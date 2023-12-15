@@ -22,7 +22,7 @@ Resources:
     Properties:
       Environment:
         Variables:
-          BUCKET_NAME: "2016-bucket"
+          BUCKET_NAME: "2016-bucket-sensor"
       CodeUri: hello_world/
       Handler: app.lambda_handler
       Runtime: python3.9
